@@ -1,0 +1,79 @@
+@import "mixins";
+@import "props";
+
+:host {
+  display: block;
+  height: 40px;
+}
+
+// select container
+.tk-container {
+  @include box(100%);
+  @include clickable();
+  user-select: none;
+  position: relative;
+}
+
+// input element
+input {
+  @include paddingRight(calc(15px + 12px + 15px));
+  @include box(100%);
+  cursor: inherit;
+}
+
+// icon container
+.tk-icon-container {
+  @include verticalCenter;
+  position: absolute;
+  right: 15px;
+}
+
+// arrow icon
+app-icon[tk-name='keyboard-arrow-down'] {
+  width: 12px;
+  top: 50%;
+
+  &.tk-reverse {
+    transform: rotate(180deg);
+  }
+}
+
+$option-height: 40px;
+$option-container-height: calc(#{$option-height} * 5);
+
+// options container
+.tk-options-container {
+  background-color: $white;
+  max-height: $option-container-height;
+  overflow: auto;
+  box-shadow: 0 5px 15px rgba($black, .3);
+  z-index: 10;
+}
+
+// option item
+.tk-option {
+  @include padding(0 20px);
+  @include flex(center);
+  @include clickable();
+  height: $option-height;
+
+  &:hover, &.tk-focused {
+    background-color: darken($white, 10%);
+  }
+}
+
+// for selected option
+.tk-option {
+  &.tk-selected {
+    .tk-option-label {
+      color: #49A9D9;
+    }
+  }
+}
+
+// option label
+.tk-option-label {
+  @include ellipsis;
+  font-size: 14px;
+  width: 100%;
+}

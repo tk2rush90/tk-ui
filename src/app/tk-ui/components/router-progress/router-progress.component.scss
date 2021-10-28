@@ -1,0 +1,18 @@
+@import "mixins";
+@import "props";
+
+// progress bar container
+.tk-container {
+  @include topLeft;
+  width: 100%;
+  height: 5px;
+  position: fixed;
+  z-index: 2000;
+}
+
+// progress bar
+.tk-progress-bar {
+  height: 100%;
+  background-color: #CA0060;
+  transition: width .12s;
+}

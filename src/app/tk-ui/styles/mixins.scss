@@ -1,0 +1,313 @@
+// set flex container
+@mixin flex($align: null, $justify: null, $direction: null, $wrap: wrap) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+  flex-direction: $direction;
+  flex-wrap: $wrap;
+
+  > * {
+    flex: 0 0 auto;
+  }
+}
+
+// set flex item properties
+// for some case IE doesn't allow shorthand flex properties like `flex: 1 1 0`
+// so this mixin can resolve cross browser issue
+@mixin itemFlex($grow: null, $shrink: null, $basis: null) {
+  flex-grow: $grow;
+  flex-shrink: $shrink;
+  flex-basis: $basis;
+}
+
+// set overflow ellipsis
+@mixin ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+// set multiline ellipsis
+@mixin multilineEllipsis($lines) {
+  @include ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+}
+
+// set top/left/bottom/right positions
+// top left
+@mixin topLeft {
+  top: 0;
+  left: 0;
+}
+
+// top right
+@mixin topRight {
+  top: 0;
+  right: 0;
+}
+
+// bottom left
+@mixin bottomLeft {
+  bottom: 0;
+  left: 0;
+}
+
+// bottom right
+@mixin bottomRight {
+  bottom: 0;
+  right: 0;
+}
+
+// set padding
+// set all padding
+@mixin padding($padding) {
+  box-sizing: border-box;
+  padding: $padding;
+}
+
+// set padding left
+@mixin paddingLeft($padding) {
+  box-sizing: border-box;
+  padding-left: $padding;
+}
+
+// set padding right
+@mixin paddingRight($padding) {
+  box-sizing: border-box;
+  padding-right: $padding;
+}
+
+// set padding top
+@mixin paddingTop($padding) {
+  box-sizing: border-box;
+  padding-top: $padding;
+}
+
+// set padding bottom
+@mixin paddingBottom($padding) {
+  box-sizing: border-box;
+  padding-bottom: $padding;
+}
+
+// set border
+// set all border
+@mixin border($border) {
+  box-sizing: border-box;
+  border: $border;
+}
+
+// set border left
+@mixin borderLeft($border) {
+  box-sizing: border-box;
+  border-left: $border;
+}
+
+// set border right
+@mixin borderRight($border) {
+  box-sizing: border-box;
+  border-right: $border;
+}
+
+// set border top
+@mixin borderTop($border) {
+  box-sizing: border-box;
+  border-top: $border;
+}
+
+// set border bottom
+@mixin borderBottom($border) {
+  box-sizing: border-box;
+  border-bottom: $border;
+}
+
+// create box
+@mixin box($size) {
+  width: $size;
+  height: $size;
+}
+
+// create ball
+@mixin ball($size) {
+  @include box($size);
+  border-radius: 50%;
+}
+
+// create rect
+@mixin rect($width, $height) {
+  width: $width;
+  height: $height;
+}
+
+// set full screen
+@mixin fullScreen {
+  @include box(100%);
+  @include topLeft;
+}
+
+// custom attribute mixin
+@mixin customAttribute($attr, $value) {
+  &[#{$attr}='#{$value}'] {
+    @content;
+  }
+}
+
+// set width between gaps
+@mixin widthBetweenGap($gap, $count) {
+  width: calc((100% - (#{$gap} * #{$count - 1})) / #{$count});
+  margin-right: $gap;
+
+  &:nth-child(#{$count}n) {
+    margin-right: 0;
+  }
+}
+
+// set multiple widths
+// $widths: it should be set of percent and sum of $widths should be 100
+// $min-width:
+//   this is min-width of total items
+//   so if it is set, min-width of each item will be calculated
+//   ex)
+//     @include setMultipleWidths((40, 60), 600px);
+//     -> item-1 { width: 40%, min-width: 240px } item-2 { width: 60%, min-width: 360px }
+@mixin setMultipleWidths($widths, $min-width: null) {
+  $i: 1;
+
+  @each $width in $widths {
+    &:nth-child(#{$i}) {
+      width: #{$width + '%'};
+
+      @if ($min-width) {
+        min-width: calc(#{$min-width / 100} * #{$width});
+      }
+    }
+
+    $i: $i + 1;
+  }
+}
+
+// arrows
+// default
+@mixin arrowDefault {
+  &::after {
+    content: '';
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    @content;
+  }
+}
+
+// top
+@mixin topArrow($size, $color) {
+  @include arrowDefault {
+    bottom: 100%;
+    left: 50%;
+    border: solid $size transparent;
+    border-bottom-color: $color;
+    margin-left: -$size;
+  }
+}
+
+// left
+@mixin leftArrow($size, $color) {
+  @include arrowDefault {
+    right: 100%;
+    top: 50%;
+    border: solid $size transparent;
+    border-right-color: $color;
+    margin-top: -$size;
+  }
+}
+
+// bottom
+@mixin bottomArrow($size, $color) {
+  @include arrowDefault {
+    top: 100%;
+    left: 50%;
+    border: solid $size transparent;
+    border-top-color: $color;
+    margin-left: -$size;
+  }
+}
+
+// right
+@mixin rightArrow($size, $color) {
+  @include arrowDefault {
+    left: 100%;
+    top: 50%;
+    border: solid $size transparent;
+    border-left-color: $color;
+    margin-top: -$size;
+  }
+}
+
+// set element clickable
+@mixin clickable($effect: false, $selectable: none) {
+  cursor: pointer;
+  user-select: $selectable;
+
+  @if($effect) {
+    &:hover {
+      opacity: .8;
+    }
+
+    &:active {
+      opacity: .6;
+    }
+  }
+}
+
+// position element to vertically center
+@mixin verticalCenter {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+// position element to horizontally center
+@mixin horizontalCenter {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+// position element to center
+@mixin center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/**
+ * ts-color attribute preset
+ */
+@mixin color($color) {
+  @include customAttribute('ts-color', $color) {
+    @content;
+  }
+}
+
+// set style under the screen width
+@mixin under($width) {
+  @media screen and (max-width: $width) {
+    @content;
+  }
+}
+
+@mixin nanumGothic {
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+@mixin jetBrainsMono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+@mixin nanumGothicCoding {
+  font-family: 'Nanum Gothic Coding', monospace;
+}
+
+@mixin quickSand {
+  font-family: 'Quicksand', sans-serif;
+}

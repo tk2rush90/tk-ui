@@ -1,0 +1,15 @@
+@import "mixins";
+@import "props";
+
+:host {
+  @include flex(center);
+  @include padding(0 20px);
+  background-color: $white;
+  height: 60px;
+}
+
+// title
+h3 {
+  font-size: 18px;
+  font-weight: 400;
+}

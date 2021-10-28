@@ -1,0 +1,37 @@
+@import "mixins";
+@import "props";
+
+@mixin type($type) {
+  @include customAttribute('tk-type', $type) {
+    @content;
+  }
+}
+
+:host {
+  @include padding(18px 20px);
+  @include clickable();
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  margin-left: -140px;
+  display: block;
+  width: 280px;
+  min-height: 50px;
+  font-size: 12px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba($black, .3);
+  color: $white;
+  z-index: 1001;
+
+  @include type('default') {
+    background-color: #1E1E1E;
+  }
+
+  @include type('success') {
+    background-color: #01B43D;
+  }
+
+  @include type('error') {
+    background-color: #FF4343;
+  }
+}

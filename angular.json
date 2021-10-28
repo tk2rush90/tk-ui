@@ -33,6 +33,11 @@
             "styles": [
               "src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/app/tk-ui/styles"
+              ]
+            },
             "scripts": []
           },
           "configurations": {

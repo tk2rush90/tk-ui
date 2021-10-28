@@ -1,0 +1,33 @@
+@import "mixins";
+@import "props";
+
+@mixin strokeButton($color, $border-color, $font-color, $hover-background, $active-background) {
+  @include customAttribute('tk-color', $color) {
+    @include border(1px solid $border-color);
+    @include padding(0 10px);
+    color: $font-color;
+
+    &:not(:disabled) {
+      @include clickable();
+
+      &:hover {
+        background-color: $hover-background;
+      }
+
+      &:active {
+        background-color: $active-background;
+      }
+    }
+
+    // additional content
+    @content;
+  }
+}
+
+// stroke button
+.tk-stroke-button {
+  @include flex(center, center);
+
+  // for 'grey' button
+  @include strokeButton('default', #BEBEBE, #BEBEBE, #F3F3F3, darken(#F3F3F3, 5%));
+}

@@ -1,0 +1,32 @@
+@import "mixins";
+@import "props";
+
+@mixin inlineButton($color, $font-color, $hover-color, $active-color) {
+  @include customAttribute('tk-color', $color) {
+    color: $font-color;
+
+    &:not(:disabled) {
+      @include clickable();
+
+      &:hover {
+        color: $hover-color;
+      }
+
+      &:active {
+        color: $active-color;
+      }
+    }
+
+    &:disabled {
+      opacity: .3;
+    }
+
+    @content;
+  }
+}
+
+// inline button
+.tk-inline-button {
+  // for grey button
+  @include inlineButton('default', #BEBEBE, darken(#BEBEBE, 5%), darken(#BEBEBE, 10%));
+}

@@ -1,0 +1,54 @@
+<!-- container -->
+<div
+  (click)="opened ? close() : open()"
+  class="tk-container">
+  <!-- input element -->
+  <input
+    #input
+    (keydown.arrowDown)="openWithInput(input)"
+    (keydown.arrowUp)="openWithInput(input)"
+    [class.ng-dirty]="dirty"
+    [class.ng-invalid]="invalid"
+    [class.ng-touched]="touched"
+    [value]="label"
+    [placeholder]="placeholder"
+    appInput
+    readonly/>
+
+  <!-- arrow down -->
+  <div class="tk-icon-container">
+    <app-icon
+      [class.tk-reverse]="opened"
+      name="keyboard-arrow-down"></app-icon>
+  </div>
+</div>
+
+<!-- options container -->
+<div
+  (autoClose)="close()"
+  *ngIf="opened"
+  [positionContainer]="elementRef"
+  [closerContainer]="elementRef"
+  [closeOnScroll]="true"
+  appAutoCloser
+  appAutoPositioner
+  appAutoScrollContainer
+  class="tk-options-container"
+  horizontalPosition="inner-left"
+  verticalPosition="outer-bottom">
+  <!-- render option item -->
+  <div
+    (click)="onOptionClicked(item)"
+    (mouseenter)="resetFocusedIndex()"
+    *ngFor="let item of options; let index = index"
+    [class.tk-focused]="index === focusedIndex"
+    [class.tk-selected]="isValueSelected(item.value)"
+    [focused]="index === focusedIndex"
+    appAutoScrollItem
+    class="tk-option">
+    <!-- option label -->
+    <div class="tk-option-label">
+      {{item.label}}
+    </div>
+  </div>
+</div>
