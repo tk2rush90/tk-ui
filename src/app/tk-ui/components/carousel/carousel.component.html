@@ -1,0 +1,15 @@
+<!-- carousel container -->
+<div class="tk-carousel-container">
+  <!-- carousel content -->
+  <ng-content select="[appCarouselContent]"></ng-content>
+</div>
+
+<!-- carousel pointer -->
+<div class="tk-carousel-pointer-container">
+  <!-- pointer -->
+  <div
+    (click)="onPointerClick(i)"
+    *ngFor="let item of (carouselContentChildren || []); let i = index"
+    [class.tk-activated]="i === index"
+    class="tk-carousel-pointer"></div>
+</div>

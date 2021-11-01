@@ -1,0 +1,17 @@
+@import "mixins";
+@import "props";
+
+app-carousel {
+  ::ng-deep {
+    .tk-carousel-container {
+      height: 100px;
+    }
+  }
+
+  width: 100%;
+}
+
+div {
+  @include flex(center, center);
+  background-color: white;
+}
