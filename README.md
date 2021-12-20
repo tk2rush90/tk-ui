@@ -1,27 +1,45 @@
-# TkUi
+# TK UI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.2.
+UI kits for Angular2+.
 
-## Development server
+# Install
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Clone repository
 
-## Code scaffolding
+```
+git clone https://github.com/tk2rush90/tk-ui.git
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Copy UI kit
 
-## Build
+Copy `src/app/tk-ui` directory to your Angular project.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Settings
 
-## Running unit tests
+### angular.json
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Add followings to `angular.json`.
 
-## Running end-to-end tests
+```json
+...
+"stylePreprocessorOptions": {
+  "includePaths": [
+    "src/app/tk-ui/styles"
+  ]
+},
+...
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### tsconfig.json
 
-## Further help
+Add followings to `tsconfig.json`.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```json
+...
+"paths": {
+  "@tk-ui/*": [
+    "src/app/tk-ui/*"
+  ]
+},
+...
+```
