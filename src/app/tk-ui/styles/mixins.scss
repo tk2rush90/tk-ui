@@ -14,7 +14,7 @@
 // set flex item properties
 // for some case IE doesn't allow shorthand flex properties like `flex: 1 1 0`
 // so this mixin can resolve cross browser issue
-@mixin itemFlex($grow: null, $shrink: null, $basis: null) {
+@mixin item-flex($grow: null, $shrink: null, $basis: null) {
   flex-grow: $grow;
   flex-shrink: $shrink;
   flex-basis: $basis;
@@ -28,7 +28,7 @@
 }
 
 // set multiline ellipsis
-@mixin multilineEllipsis($lines) {
+@mixin multiline-ellipsis($lines) {
   @include ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: $lines;
@@ -38,25 +38,25 @@
 
 // set top/left/bottom/right positions
 // top left
-@mixin topLeft {
+@mixin top-left {
   top: 0;
   left: 0;
 }
 
 // top right
-@mixin topRight {
+@mixin top-right {
   top: 0;
   right: 0;
 }
 
 // bottom left
-@mixin bottomLeft {
+@mixin bottom-left {
   bottom: 0;
   left: 0;
 }
 
 // bottom right
-@mixin bottomRight {
+@mixin bottom-right {
   bottom: 0;
   right: 0;
 }
@@ -69,25 +69,25 @@
 }
 
 // set padding left
-@mixin paddingLeft($padding) {
+@mixin padding-left($padding) {
   box-sizing: border-box;
   padding-left: $padding;
 }
 
 // set padding right
-@mixin paddingRight($padding) {
+@mixin padding-right($padding) {
   box-sizing: border-box;
   padding-right: $padding;
 }
 
 // set padding top
-@mixin paddingTop($padding) {
+@mixin padding-top($padding) {
   box-sizing: border-box;
   padding-top: $padding;
 }
 
 // set padding bottom
-@mixin paddingBottom($padding) {
+@mixin padding-bottom($padding) {
   box-sizing: border-box;
   padding-bottom: $padding;
 }
@@ -100,25 +100,25 @@
 }
 
 // set border left
-@mixin borderLeft($border) {
+@mixin border-left($border) {
   box-sizing: border-box;
   border-left: $border;
 }
 
 // set border right
-@mixin borderRight($border) {
+@mixin border-right($border) {
   box-sizing: border-box;
   border-right: $border;
 }
 
 // set border top
-@mixin borderTop($border) {
+@mixin border-top($border) {
   box-sizing: border-box;
   border-top: $border;
 }
 
 // set border bottom
-@mixin borderBottom($border) {
+@mixin border-bottom($border) {
   box-sizing: border-box;
   border-bottom: $border;
 }
@@ -142,20 +142,20 @@
 }
 
 // set full screen
-@mixin fullScreen {
+@mixin fullscreen {
   @include box(100%);
-  @include topLeft;
+  @include top-left;
 }
 
 // custom attribute mixin
-@mixin customAttribute($attr, $value) {
+@mixin attribute-styles($attr, $value) {
   &[#{$attr}='#{$value}'] {
     @content;
   }
 }
 
 // set width between gaps
-@mixin widthBetweenGap($gap, $count) {
+@mixin flex-grid($gap, $count) {
   width: calc((100% - (#{$gap} * #{$count - 1})) / #{$count});
   margin-right: $gap;
 
@@ -164,7 +164,6 @@
   }
 }
 
-// set multiple widths
 // $widths: it should be set of percent and sum of $widths should be 100
 // $min-width:
 //   this is min-width of total items
@@ -172,7 +171,7 @@
 //   ex)
 //     @include setMultipleWidths((40, 60), 600px);
 //     -> item-1 { width: 40%, min-width: 240px } item-2 { width: 60%, min-width: 360px }
-@mixin setMultipleWidths($widths, $min-width: null) {
+@mixin width-by-ratio($widths, $min-width: null) {
   $i: 1;
 
   @each $width in $widths {
@@ -190,7 +189,7 @@
 
 // arrows
 // default
-@mixin arrowDefault {
+@mixin arrow-default {
   &::after {
     content: '';
     height: 0;
@@ -202,8 +201,8 @@
 }
 
 // top
-@mixin topArrow($size, $color) {
-  @include arrowDefault {
+@mixin top-arrow($size, $color) {
+  @include arrow-default {
     bottom: 100%;
     left: 50%;
     border: solid $size transparent;
@@ -213,8 +212,8 @@
 }
 
 // left
-@mixin leftArrow($size, $color) {
-  @include arrowDefault {
+@mixin left-arrow($size, $color) {
+  @include arrow-default {
     right: 100%;
     top: 50%;
     border: solid $size transparent;
@@ -224,8 +223,8 @@
 }
 
 // bottom
-@mixin bottomArrow($size, $color) {
-  @include arrowDefault {
+@mixin bottom-arrow($size, $color) {
+  @include arrow-default {
     top: 100%;
     left: 50%;
     border: solid $size transparent;
@@ -235,8 +234,65 @@
 }
 
 // right
-@mixin rightArrow($size, $color) {
-  @include arrowDefault {
+@mixin right-arrow($size, $color) {
+  @include arrow-default {
+    left: 100%;
+    top: 50%;
+    border: solid $size transparent;
+    border-left-color: $color;
+    margin-top: -$size;
+  }
+}
+
+// arrow border
+// border default
+@mixin arrow-border-default {
+  &::before {
+    content: '';
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    @content;
+  }
+}
+
+// top
+@mixin top-arrow-border($size, $color) {
+  @include arrow-border-default {
+    bottom: 100%;
+    left: 50%;
+    border: solid $size transparent;
+    border-bottom-color: $color;
+    margin-left: -$size;
+  }
+}
+
+// left
+@mixin left-arrow-border($size, $color) {
+  @include arrow-border-default {
+    right: 100%;
+    top: 50%;
+    border: solid $size transparent;
+    border-right-color: $color;
+    margin-top: -$size;
+  }
+}
+
+// bottom
+@mixin bottom-arrow-border($size, $color) {
+  @include arrow-border-default {
+    top: 100%;
+    left: 50%;
+    border: solid $size transparent;
+    border-top-color: $color;
+    margin-left: -$size;
+  }
+}
+
+// right
+@mixin right-arrow-border($size, $color) {
+  @include arrow-border-default {
     left: 100%;
     top: 50%;
     border: solid $size transparent;
@@ -262,13 +318,13 @@
 }
 
 // position element to vertically center
-@mixin verticalCenter {
+@mixin vertical-center {
   top: 50%;
   transform: translateY(-50%);
 }
 
 // position element to horizontally center
-@mixin horizontalCenter {
+@mixin horizontal-center {
   left: 50%;
   transform: translateX(-50%);
 }
@@ -280,34 +336,9 @@
   transform: translate(-50%, -50%);
 }
 
-/**
- * ts-color attribute preset
- */
-@mixin color($color) {
-  @include customAttribute('ts-color', $color) {
-    @content;
-  }
-}
-
 // set style under the screen width
-@mixin under($width) {
+@mixin screen-under($width) {
   @media screen and (max-width: $width) {
     @content;
   }
-}
-
-@mixin nanumGothic {
-  font-family: 'Nanum Gothic', sans-serif;
-}
-
-@mixin jetBrainsMono {
-  font-family: 'JetBrains Mono', monospace;
-}
-
-@mixin nanumGothicCoding {
-  font-family: 'Nanum Gothic Coding', monospace;
-}
-
-@mixin quickSand {
-  font-family: 'Quicksand', sans-serif;
 }

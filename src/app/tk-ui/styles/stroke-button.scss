@@ -1,8 +1,8 @@
 @import "mixins";
 @import "props";
 
-@mixin strokeButton($color, $border-color, $font-color, $hover-background, $active-background) {
-  @include customAttribute('tk-color', $color) {
+@mixin stroke-button($color, $border-color, $font-color, $hover-background, $active-background) {
+  @include attribute-styles('tk-color', $color) {
     @include border(1px solid $border-color);
     @include padding(0 10px);
     color: $font-color;
@@ -29,5 +29,5 @@
   @include flex(center, center);
 
   // for 'grey' button
-  @include strokeButton('default', #BEBEBE, #BEBEBE, #F3F3F3, darken(#F3F3F3, 5%));
+  @include stroke-button('default', #BEBEBE, #BEBEBE, #F3F3F3, darken(#F3F3F3, 5%));
 }

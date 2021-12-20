@@ -3,7 +3,7 @@
 
 :host {
   @include box(100%);
-  @include topLeft;
+  @include top-left;
   display: block;
   position: absolute;
   background-color: rgba($black, .8);

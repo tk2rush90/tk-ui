@@ -16,14 +16,15 @@
 
 // input element
 input {
-  @include paddingRight(calc(15px + 12px + 15px));
+  @include padding-right(calc(15px + 12px + 15px));
   @include box(100%);
+  text-overflow: ellipsis;
   cursor: inherit;
 }
 
 // icon container
 .tk-icon-container {
-  @include verticalCenter;
+  @include vertical-center;
   position: absolute;
   right: 15px;
 }

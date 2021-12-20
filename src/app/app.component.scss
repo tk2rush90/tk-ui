@@ -1,17 +1,61 @@
 @import "mixins";
 @import "props";
 
-app-carousel {
-  ::ng-deep {
-    .tk-carousel-container {
-      height: 100px;
+:host {
+  width: 100vw;
+  height: 100vh;
+  @include flex(center, center);
+}
+
+$loader-colors: #0a40db, #3867ec, #9024e2, #212121, #7d7d7d;
+$loader-dash: 63;
+$loader-duration: length($loader-colors) * 1s;
+$loader-duration-alt: $loader-duration / length($loader-colors);
+$loader-keyframe: 1 / (length($loader-colors) * 2) * 100;
+
+.loader {
+  @include box(24px);
+  animation: loader-turn $loader-duration-alt linear infinite;
+
+  @keyframes loader-turn {
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(720deg);
+    }
+  }
+}
+
+.loader-stroke {
+  animation: loader-stroke $loader-duration linear infinite;
+  fill: none;
+  stroke-dasharray: $loader-dash;
+  stroke-dashoffset: $loader-dash;
+  stroke-linecap: round;
+  stroke-width: 4;
+
+  @for $i from 1 through length($loader-colors) {
+    &:nth-child(#{$i}) {
+      stroke: nth($loader-colors, $i);
+
+      @if $i > 1 {
+        animation-delay: ($i - 1) * $loader-duration-alt;
+      }
     }
   }
 
-  width: 100%;
+  @keyframes loader-stroke {
+    #{$loader-keyframe * 1%} {
+      stroke-dashoffset: 0;
+    }
+
+    #{$loader-keyframe * 2%}, 100% {
+      stroke-dashoffset: $loader-dash;
+    }
+  }
 }
 
-div {
-  @include flex(center, center);
-  background-color: white;
+.box {
+  position: absolute;
 }

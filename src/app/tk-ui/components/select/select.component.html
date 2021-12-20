@@ -1,5 +1,6 @@
 <!-- container -->
 <div
+  #button
   (click)="opened ? close() : open()"
   class="tk-container">
   <!-- input element -->
@@ -27,15 +28,17 @@
 <div
   (autoClose)="close()"
   *ngIf="opened"
-  [positionContainer]="elementRef"
-  [closerContainer]="elementRef"
-  [closeOnScroll]="true"
+  [positionContainer]="elementRef.nativeElement"
+  [closerContainer]="elementRef.nativeElement"
+  [closerButton]="button"
   appAutoCloser
   appAutoPositioner
   appAutoScrollContainer
   class="tk-options-container"
-  horizontalPosition="inner-left"
-  verticalPosition="outer-bottom">
+  horizontalBindPosition="inside"
+  horizontalPriority="left"
+  verticalBindPosition="outside"
+  verticalPriority="bottom">
   <!-- render option item -->
   <div
     (click)="onOptionClicked(item)"

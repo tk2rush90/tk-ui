@@ -1,4 +1,4 @@
-import {isDefined} from '@tk-utils/utils/validation.util';
+import {ValidationUtil} from '@tk-ui/utils/validation.util';
 
 export interface UnrefinedParams {
   [key: string]: any;
@@ -29,7 +29,7 @@ export class ApiBaseService {
     const refined: { [k: string]: string } = {};
 
     Object.keys(params || {}).forEach(key => {
-      if (isDefined(params[key])) {
+      if (ValidationUtil.isDefined(params[key])) {
         refined[key] = params[key] + '';
       }
     });

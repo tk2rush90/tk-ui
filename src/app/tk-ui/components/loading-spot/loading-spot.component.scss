@@ -2,7 +2,7 @@
 @import "props";
 
 @mixin ballColor($color) {
-  @include customAttribute('tk-color', $color) {
+  @include attribute-styles('tk-color', $color) {
     @content;
   }
 }

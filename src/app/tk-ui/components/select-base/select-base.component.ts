@@ -148,6 +148,8 @@ export class SelectBaseComponent<T> extends FormControlBaseDirective<T> implemen
    * @param event keyboard event
    */
   protected _handleKeydownEvent = (event: KeyboardEvent): void => {
+    event.preventDefault();
+
     this._onEsc(event);
     this._onArrowDown(event);
     this._onArrowUp(event);

@@ -36,4 +36,12 @@ export class ValidationUtil {
   static isValidDate(value: DateLike): boolean {
     return !isNaN(new Date(value).getTime());
   }
+
+  /**
+   * return true when the text is valid
+   * @param value value
+   */
+  static isValidText(value: string): boolean {
+    return this.isDefined(value) && !!value.trim();
+  }
 }

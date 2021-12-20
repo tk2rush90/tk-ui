@@ -2,7 +2,7 @@
 @import "props";
 
 @mixin type($type) {
-  @include customAttribute('tk-type', $type) {
+  @include attribute-styles('tk-type', $type) {
     @content;
   }
 }

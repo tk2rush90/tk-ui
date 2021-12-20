@@ -2,7 +2,7 @@
 @import "props";
 
 :host {
-  @include topLeft;
+  @include top-left;
   @include box(100%);
   // center the modal component
   @include flex(center, center);

@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import {
   ActivationEnd,
   ActivationStart, ChildActivationEnd,
   ChildActivationStart,
   GuardsCheckEnd,
-  GuardsCheckStart, NavigationCancel, NavigationEnd, NavigationError,
+  GuardsCheckStart,
   NavigationStart, ResolveEnd, ResolveStart,
   RouteConfigLoadEnd,
   RouteConfigLoadStart,
@@ -12,7 +12,7 @@ import {
   RoutesRecognized
 } from '@angular/router';
 import {SubscriptionService} from '@tk-ui/services/common/subscription.service';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import {Animator} from '@tk-ui/utils/animation.util';
 
 @Component({
   selector: 'app-router-progress',
@@ -21,44 +21,72 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
   providers: [
     SubscriptionService,
   ],
-  animations: [
-    trigger('visible', [
-      state('void', style({
-        opacity: 0,
-      })),
-      state('visible', style({
-        opacity: 1,
-      })),
-      transition('void => visible', animate(0)),
-      transition('visible => void', animate('.5s')),
-    ])
-  ]
 })
 export class RouterProgressComponent implements OnInit, OnDestroy {
   /**
-   * progress bar visible state
+   * bind width
    */
-  visible = false;
+  @HostBinding('style.width') get width(): string {
+    return this._progress + '%';
+  }
+
+  /**
+   * bind opacity
+   */
+  @HostBinding('style.opacity') get opacity(): number {
+    return this._opacity;
+  }
+
+  /**
+   * progress animator
+   */
+  private _progressAnimator = new Animator();
+
+  /**
+   * opacity animator
+   */
+  private _opacityAnimator = new Animator();
+
+  /**
+   * opacity
+   */
+  private _opacity = 0;
 
   /**
    * progress percentage
    */
-  progress = 0;
-
-  /**
-   * progress step level
-   */
-  private _step = 100 / 13;
+  private _progress = 0;
 
   /**
    * timeout timer
    */
   private _timer: any;
 
+  private _navigations = [
+    NavigationStart,
+    RouteConfigLoadStart,
+    RouteConfigLoadEnd,
+    RoutesRecognized,
+    GuardsCheckStart,
+    ChildActivationStart,
+    ActivationStart,
+    GuardsCheckEnd,
+    ResolveStart,
+    ResolveEnd,
+    ChildActivationEnd,
+    ActivationEnd,
+  ];
+
+  /**
+   * progress step level
+   */
+  private _step = 100 / this._navigations.length;
+
   constructor(
     private router: Router,
     private subscriptionService: SubscriptionService,
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this._subscribeRouterEvents();
@@ -66,6 +94,8 @@ export class RouterProgressComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     clearTimeout(this._timer);
+    this._opacityAnimator.cancel();
+    this._progressAnimator.cancel();
   }
 
   /**
@@ -74,68 +104,42 @@ export class RouterProgressComponent implements OnInit, OnDestroy {
   private _subscribeRouterEvents(): void {
     const sub = this.router.events
       .subscribe(res => {
-        if (res instanceof NavigationStart) {
-          this.visible = true;
-          this.progress = this._step;
-        }
+        const index = this._navigations.findIndex(navigation => res instanceof navigation);
 
-        if (res instanceof RouteConfigLoadStart) {
-          this.progress = this._step * 2;
-        }
+        if (index === 0) {
+          this._opacityAnimator.cancel();
+          this._opacity = 1;
+          this._progress = 0;
+        } else {
+          const target = (index === -1) ? 100 : this._step * (index + 1);
 
-        if (res instanceof RouteConfigLoadEnd) {
-          this.progress = this._step * 3;
-        }
+          this._progressAnimator.animate({
+            start: this._progress,
+            target,
+            duration: 150,
+            onProgress: value => {
+              console.log(value);
 
-        if (res instanceof RoutesRecognized) {
-          this.progress = this._step * 4;
-        }
-
-        if (res instanceof GuardsCheckStart) {
-          this.progress = this._step * 5;
-        }
-
-        if (res instanceof ChildActivationStart) {
-          this.progress = this._step * 6;
-        }
-
-        if (res instanceof ActivationStart) {
-          this.progress = this._step * 7;
-        }
-
-        if (res instanceof GuardsCheckEnd) {
-          this.progress = this._step * 8;
-        }
-
-        if (res instanceof ResolveStart) {
-          this.progress = this._step * 9;
-        }
-
-        if (res instanceof ResolveEnd) {
-          this.progress = this._step * 10;
-        }
-
-        if (res instanceof ChildActivationEnd) {
-          this.progress = this._step * 11;
-        }
-
-        if (res instanceof ActivationEnd) {
-          this.progress = this._step * 12;
-        }
-
-        if (
-          res instanceof NavigationEnd
-          || res instanceof NavigationCancel
-          || res instanceof NavigationError
-        ) {
-          clearTimeout(this._timer);
-          this.progress = this._step * 13;
-          this._timer = setTimeout(() => {
-            this.visible = false;
+              this._progress = value;
+            },
+            onEnd: () => this._hideProgressBar(),
           });
         }
       });
 
     this.subscriptionService.store('_subscribeRouterEvents', sub);
+  }
+
+  /**
+   * hide progress bar
+   */
+  private _hideProgressBar(): void {
+    this._opacityAnimator.animate({
+      start: this._opacity,
+      target: 0,
+      delay: 150,
+      duration: 500,
+      onProgress: value => this._opacity = value,
+    });
   }
 }

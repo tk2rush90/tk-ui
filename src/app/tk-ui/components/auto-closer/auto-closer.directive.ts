@@ -1,4 +1,4 @@
-import {AfterViewInit, Directive, ElementRef, EventEmitter, HostListener, Input, OnDestroy, Output} from '@angular/core';
+import {AfterViewInit, Directive, ElementRef, EventEmitter, Input, OnDestroy, Output} from '@angular/core';
 
 @Directive({
   selector: '[appAutoCloser]'
@@ -8,9 +8,16 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
    * set closer container
    * @param container container
    */
-  @Input() set closerContainer(container: ElementRef<HTMLElement> | HTMLElement) {
-    this._closerContainerRef = container;
-    this._setCloserContainer();
+  @Input() set closerContainer(container: HTMLElement) {
+    this._closerContainer = container;
+  }
+
+  /**
+   * set closer control button
+   * @param button button
+   */
+  @Input() set closerButton(button: HTMLElement) {
+    this._closerButton = button;
   }
 
   /**
@@ -19,7 +26,12 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
    */
   @Input() set closeOnScroll(status: boolean) {
     this._closeOnScroll = status;
-    this._setWheelEvent();
+
+    if (this._closeOnScroll) {
+      this._appendWheelEvent();
+    } else {
+      this._removeWheelEvent();
+    }
   }
 
   /**
@@ -30,17 +42,12 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
   /**
    * closer container ref
    */
-  private _closerContainerRef: ElementRef<HTMLElement> | HTMLElement | undefined;
+  private _closerContainer!: HTMLElement;
 
   /**
-   * closer container element
+   * closer toggle button
    */
-  private _closerContainer: HTMLElement | undefined;
-
-  /**
-   * host element
-   */
-  private _element: HTMLElement | undefined;
+  private _closerButton?: HTMLElement;
 
   /**
    * set this field to `true` to emit `autoClose` emitter when wheel event triggered
@@ -48,64 +55,72 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
   private _closeOnScroll = false;
 
   /**
-   * flag to detect event appended state
+   * check wheel event appended
    */
-  private _eventAppended = false;
+  private _wheelEventAppended = false;
+
+  /**
+   * check click event appended
+   */
+  private _clickEventAppended = false;
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
-  ) { }
+  ) {
+  }
 
   ngAfterViewInit(): void {
-    this._setElement();
-    this._setWheelEvent();
+    this._checkCloserContainer();
+    this._appendClickEvent();
   }
 
   ngOnDestroy(): void {
     this._removeWheelEvent();
+    this._removeClickEvent();
   }
 
-  /**
-   * set host element
-   */
-  private _setElement(): void {
-    if (this.elementRef) {
-      this._element = this.elementRef.nativeElement;
+  get element(): HTMLElement {
+    return this.elementRef.nativeElement;
+  }
+
+  get button(): HTMLElement | undefined {
+    return this._closerButton;
+  }
+
+  private _checkCloserContainer(): void {
+    if (!this._closerContainer) {
+      throw new Error(`'closerContainer' for AutoCloser is required`);
     }
   }
 
-  /**
-   * set closer container element
-   */
-  private _setCloserContainer(): void {
-    if (this._closerContainerRef) {
-      if (this._closerContainerRef instanceof ElementRef) {
-        this._closerContainer = this._closerContainerRef.nativeElement;
-      } else {
-        this._closerContainer = this._closerContainerRef;
-      }
+  private _appendClickEvent(): void {
+    if (!this._clickEventAppended) {
+      window.addEventListener('click', this._detectEventTarget, {capture: true});
+      this._clickEventAppended = true;
     }
   }
 
-  /**
-   * detect window clicked event
-   * @param event event
-   */
-  @HostListener('window:click', ['$event'])
-  onWindowClicked(event: MouseEvent): void {
-    this._detectEventTarget(event);
+  private _removeClickEvent(): void {
+    if (this._clickEventAppended) {
+      window.removeEventListener('click', this._detectEventTarget, {capture: true});
+      this._clickEventAppended = false;
+    }
   }
 
   /**
    * detect event target to emit `autoClose`
    * @param event mouse event
    */
-  private _detectEventTarget(event: Event): void {
-    if (this._closerContainer) {
-      const target = event.target as HTMLElement;
+  private _detectEventTarget = (event: Event): void => {
+    const target = event.target as HTMLElement;
 
+    if (this.button) {
+      if (!this.button.contains(target)) {
+        this._emitAutoClose();
+      }
+    } else {
       if (!this._closerContainer.contains(target)) {
-        this.autoClose.emit();
+        this._emitAutoClose();
       }
     }
   }
@@ -113,10 +128,20 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
   /**
    * set wheel event to window to emit `autoClose`
    */
-  private _setWheelEvent(): void {
-    if (!this._eventAppended && this._closeOnScroll) {
+  private _appendWheelEvent(): void {
+    if (!this._wheelEventAppended) {
       window.addEventListener('wheel', this._wheelEventHandler, {capture: true});
-      this._eventAppended = true;
+      this._wheelEventAppended = true;
+    }
+  }
+
+  /**
+   * remove the wheel event from the window
+   */
+  private _removeWheelEvent(): void {
+    if (this._wheelEventAppended) {
+      window.removeEventListener('wheel', this._wheelEventHandler, {capture: true});
+      this._wheelEventAppended = false;
     }
   }
 
@@ -125,7 +150,6 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
    * @param event event
    */
   private _wheelEventHandler = (event: WheelEvent) => {
-    this._detectEventTarget(event);
     this._handleInsideWheelingEvent(event);
   }
 
@@ -134,45 +158,36 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
    * @param event
    */
   private _handleInsideWheelingEvent(event: WheelEvent): void {
-    if (this._element && this._closerContainer) {
-      const target = event.target as HTMLElement;
+    const target = event.target as HTMLElement;
 
-      if (this._element.contains(target)) {
-        if (event.deltaY > 0 && this.isElementScrollOnBottom) {
-          this.autoClose.emit();
-        }
-
-        if (event.deltaY < 0 && this.isElementScrollOnTop) {
-          this.autoClose.emit();
-        }
+    if (this.element.contains(target)) {
+      if (event.deltaY > 0 && this.isElementScrollOnBottom) {
+        this._emitAutoClose();
       }
+
+      if (event.deltaY < 0 && this.isElementScrollOnTop) {
+        this._emitAutoClose();
+      }
+    } else {
+      this._emitAutoClose();
     }
+  }
+
+  private _emitAutoClose(): void {
+    this.autoClose.emit();
   }
 
   /**
    * return `true` when element scroll is on bottom
    */
   get isElementScrollOnBottom(): boolean | void {
-    if (this._element) {
-      return this._element.scrollHeight <= this._element.scrollTop + this._element.offsetHeight;
-    }
+    return this.element.scrollHeight <= this.element.scrollTop + this.element.offsetHeight;
   }
 
   /**
    * return `true` when element scroll is on top
    */
   get isElementScrollOnTop(): boolean | void {
-    if (this._element) {
-      return this._element.scrollTop <= 0;
-    }
-  }
-
-  /**
-   * remove the wheel event from the window
-   */
-  private _removeWheelEvent(): void {
-    if (this._eventAppended) {
-      window.removeEventListener('wheel', this._wheelEventHandler, {capture: true});
-    }
+    return this.element.scrollTop <= 0;
   }
 }
