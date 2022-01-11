@@ -1,0 +1,13 @@
+<form (submit)="$event.preventDefault(); onConfirmClick()">
+  <!-- render option control item -->
+  <app-option-control-item
+    *ngFor="let item of controller.options"
+    [data]="item"></app-option-control-item>
+
+  <!-- confirm button -->
+  <button
+    (click)="onConfirmClick()"
+    appFlatButton>
+    Confirm
+  </button>
+</form>

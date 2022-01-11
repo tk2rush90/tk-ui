@@ -1,0 +1,16 @@
+<!-- svg container -->
+<svg
+  [style.transform]="rotate"
+  [style.width]="size + 'px'"
+  [style.height]="size + 'px'"
+  [attr.viewBox]="viewBox">
+  <!-- render circles -->
+  <circle
+    [attr.cx]="center"
+    [attr.cy]="center"
+    [attr.r]="radius"
+    [attr.stroke-dasharray]="dashArray"
+    [attr.stroke-dashoffset]="dashOffset"
+    [attr.stroke-width]="strokeWidth"
+    [attr.stroke]="color"/>
+</svg>

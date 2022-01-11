@@ -43,3 +43,17 @@ Add followings to `tsconfig.json`.
 },
 ...
 ```
+
+# Charts
+
+To use chart components, install [d3.js](https://d3js.org/) to your project.
+
+```
+npm i d3 && npm i -D @types/d3
+```
+
+If you don't want to use chart components, remove `src/app/tk-ui/charts` directory from your project.
+
+# IndexedDB
+
+There are utilities for using IndexedDB.

@@ -1,0 +1,31 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  @include box(20px);
+  @include flex(center, center);
+  @include border(1px solid #ccc);
+  cursor: pointer;
+  user-select: none;
+
+  // checked state
+  &.tk-checked {
+    background-color: $black;
+    border-color: $black;
+  }
+}
+
+// done icon color
+app-icon {
+  ::ng-deep {
+    path {
+      fill: $white;
+    }
+  }
+}
+
+// done icon size
+app-icon {
+  width: 14px;
+}

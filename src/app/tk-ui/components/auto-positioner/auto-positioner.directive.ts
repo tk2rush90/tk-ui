@@ -2,7 +2,7 @@ import {
   AfterViewChecked,
   AfterViewInit,
   Directive,
-  ElementRef, HostBinding,
+  ElementRef,
   HostListener,
   Inject,
   Input,
@@ -66,14 +66,6 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
   @Input() set width(width: number) {
     this._width = width;
   }
-
-  // rendered vertical position
-  // bind to attribute
-  @HostBinding('attr.tk-vertical-position') renderedVerticalPosition: VerticalPriority = 'top';
-
-  // rendered vertical position
-  // bind to attribute
-  @HostBinding('attr.tk-horizontal-position') renderedHorizontalPosition: HorizontalPriority = 'left';
 
   /**
    * position container ref
@@ -217,11 +209,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (leftRemains > 0 || rightRemains < 0) {
           // left is available or right is unavailable
           this.renderer.setStyle(this.element, 'left', containerDomRect.left + 'px');
-          this._setRenderedHorizontalPosition('left');
         } else {
           // left is unavailable and right is available
           this.renderer.setStyle(this.element, 'left', rightRemains + 'px');
-          this._setRenderedHorizontalPosition('right');
         }
 
         break;
@@ -231,11 +221,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (rightRemains > 0 || leftRemains < 0) {
           // right is available or left is unavailable
           this.renderer.setStyle(this.element, 'left', rightRemains + 'px');
-          this._setRenderedHorizontalPosition('right');
         } else {
           // right is unavailable and left is available
           this.renderer.setStyle(this.element, 'left', containerDomRect.left + 'px');
-          this._setRenderedHorizontalPosition('left');
         }
 
         break;
@@ -257,11 +245,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (leftRemains > 0 || rightRemains < 0) {
           // left is available or right is unavailable
           this.renderer.setStyle(this.element, 'left', leftRemains + 'px');
-          this._setRenderedHorizontalPosition('left');
         } else {
           // left is unavailable and right is available
           this.renderer.setStyle(this.element, 'left', containerDomRect.right + 'px');
-          this._setRenderedHorizontalPosition('right');
         }
 
         break;
@@ -271,11 +257,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (rightRemains > 0 || leftRemains < 0) {
           // right is available or left is unavailable
           this.renderer.setStyle(this.element, 'left', containerDomRect.right + 'px');
-          this._setRenderedHorizontalPosition('right');
         } else {
           // right is unavailable and left is available
           this.renderer.setStyle(this.element, 'left', leftRemains + 'px');
-          this._setRenderedHorizontalPosition('left');
         }
 
         break;
@@ -314,11 +298,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (topRemains > 0 || bottomRemains < 0) {
           // top is available or bottom is unavailable
           this.renderer.setStyle(this.element, 'top', topRemains + 'px');
-          this._setRenderedVerticalPosition('top');
         } else {
           // top is unavailable and bottom is available
           this.renderer.setStyle(this.element, 'top', containerDomRect.top + 'px');
-          this._setRenderedVerticalPosition('bottom');
         }
 
         break;
@@ -328,11 +310,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (bottomRemains > 0 || topRemains < 0) {
           // bottom is available or top is unavailable
           this.renderer.setStyle(this.element, 'top', containerDomRect.top + 'px');
-          this._setRenderedVerticalPosition('bottom');
         } else {
           // bottom is unavailable and top is available
           this.renderer.setStyle(this.element, 'top', topRemains + 'px');
-          this._setRenderedVerticalPosition('top');
         }
 
         break;
@@ -354,11 +334,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (topRemains > 0 || bottomRemains < 0) {
           // top is available or bottom is unavailable
           this.renderer.setStyle(this.element, 'top', topRemains + 'px');
-          this._setRenderedVerticalPosition('top');
         } else {
           // top is unavailable and bottom is available
           this.renderer.setStyle(this.element, 'top', containerDomRect.bottom + 'px');
-          this._setRenderedVerticalPosition('bottom');
         }
 
         break;
@@ -368,11 +346,9 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
         if (bottomRemains > 0 || topRemains < 0) {
           // bottom is available or top is unavailable
           this.renderer.setStyle(this.element, 'top', containerDomRect.bottom + 'px');
-          this._setRenderedVerticalPosition('bottom');
         } else {
           // bottom is unavailable and top is available
           this.renderer.setStyle(this.element, 'top', topRemains + 'px');
-          this._setRenderedVerticalPosition('top');
         }
       }
     }
@@ -396,22 +372,6 @@ export class AutoPositionerDirective implements AfterViewInit, AfterViewChecked 
     if (this._viewInitialized) {
       this._setPosition();
     }
-  }
-
-  /**
-   * set rendered vertical position
-   * @param position position
-   */
-  private _setRenderedVerticalPosition(position: VerticalPriority): void {
-    this.renderedVerticalPosition = position;
-  }
-
-  /**
-   * set rendered horizontal position
-   * @param position position
-   */
-  private _setRenderedHorizontalPosition(position: HorizontalPriority): void {
-    this.renderedHorizontalPosition = position;
   }
 }
 

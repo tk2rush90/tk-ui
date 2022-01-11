@@ -1,4 +1,16 @@
 export class Animator<T = number> {
+  // global animator running state
+  private static _running = false;
+
+  // animation frame
+  private static _frame = 0;
+
+  // waiting animations for delay
+  private static _waitingAnimations: Animator<any>[] = [];
+
+  // running animations
+  private static _runningAnimations: Animator<any>[] = [];
+
   /**
    * calculate number value with progress
    * @param start start value
@@ -7,6 +19,79 @@ export class Animator<T = number> {
    */
   static calculateNumericProgress(start: number, target: number, progress: number): number {
     return start + ((target - start) * progress);
+  }
+
+  /**
+   * run global animator
+   */
+  static run(): void {
+    this._running = true;
+    this._frame = requestAnimationFrame(this._runChildAnimations);
+  }
+
+  /**
+   * stop global animator
+   */
+  static stop(): void {
+    this._running = false;
+    cancelAnimationFrame(this._frame);
+  }
+
+  /**
+   * add running animator
+   * @param animator animator
+   */
+  static addRunningAnimation(animator: Animator<any>): void {
+    this.removeAnimator(animator);
+    this._runningAnimations.push(animator);
+  }
+
+  /**
+   * add animator as waiting animation
+   * @param animator animator
+   */
+  static addWaitingAnimation(animator: Animator<any>): void {
+    this.removeAnimator(animator);
+    this._waitingAnimations.push(animator);
+  }
+
+  /**
+   * remove animator
+   * @param animator animator
+   */
+  static removeAnimator(animator: Animator<any>): void {
+    this._waitingAnimations = this._waitingAnimations.filter(item => item !== animator);
+    this._runningAnimations = this._runningAnimations.filter(item => item !== animator);
+  }
+
+  /**
+   * run child animations
+   */
+  private static _runChildAnimations = (): void => {
+    const now = performance.now();
+
+    Animator._waitingAnimations.forEach(animator => animator.wait(now));
+    Animator._runningAnimations.forEach(animator => animator.draw(now));
+
+    if (Animator._running) {
+      Animator._frame = requestAnimationFrame(Animator._runChildAnimations);
+    }
+  }
+
+  // local animation frame
+  private _frame = 0;
+
+  // animation starting time
+  private _startingTime = 0;
+
+  // animation start options
+  private _options!: AnimatorStartOptions<T>;
+
+  // use global state
+  private readonly _useGlobal: boolean;
+
+  constructor(options?: AnimatorOptions) {
+    this._useGlobal = options?.useGlobal || false;
   }
 
   /**
@@ -52,21 +137,6 @@ export class Animator<T = number> {
   }
 
   /**
-   * animation frame
-   */
-  private _frame = 0;
-
-  /**
-   * animation starting time
-   */
-  private _startingTime = 0;
-
-  /**
-   * animator start options
-   */
-  private _options!: AnimatorStartOptions<T>;
-
-  /**
    * start animation
    * @param options animator start options
    */
@@ -81,32 +151,68 @@ export class Animator<T = number> {
     }
 
     if (this.delay > 0) {
-      this._frame = requestAnimationFrame(this._wait);
+      this._addWaitingQueue(true);
     } else {
-      this._frame = requestAnimationFrame(this._draw);
+      this._addRunningQueue(true);
     }
   }
 
   /**
    * wait for delay
+   * this is for global animation
+   * @param now current time
+   */
+  wait = (now: number): void => {
+    this._handleWait(now);
+  }
+
+  /**
+   * wait for delay
+   * this is for local animation
    */
   private _wait = (): void => {
-    const duration = performance.now() - this._startingTime;
+    this._handleWait();
+  }
+
+  /**
+   * handle waiting delay
+   * @param now current time
+   */
+  private _handleWait(now = performance.now()): void {
+    const duration = Math.min(now - this._startingTime, this.delay);
 
     if (duration >= this.delay) {
       this.cancel();
-      this._startingTime = performance.now();
-      this._frame = requestAnimationFrame(this._draw);
+      this._startingTime = now;
+      this._addRunningQueue(true);
     } else {
-      this._frame = requestAnimationFrame(this._wait);
+      this._addWaitingQueue();
     }
   }
 
   /**
    * draw next frame
+   * this is for global animation
+   * @param now current time
+   */
+  draw = (now: number): void => {
+    this._handleDraw(now);
+  }
+
+  /**
+   * draw next frame
+   * this is for local animation
    */
   private _draw = (): void => {
-    const passedTime = performance.now() - this._startingTime;
+    this._handleDraw();
+  }
+
+  /**
+   * handle draw animation
+   * @param now current time
+   */
+  private _handleDraw(now = performance.now()): void {
+    const passedTime = Math.min(now - this._startingTime, this.duration);
     const progress = this._getProgress(passedTime);
 
     if (!isNaN(progress)) {
@@ -135,6 +241,34 @@ export class Animator<T = number> {
       } else {
         this.cancel();
         this._callOnEnd();
+      }
+    } else {
+      this._addRunningQueue();
+    }
+  }
+
+  /**
+   * add instance to waiting queue
+   * @param init add to global animator when it's `true`
+   */
+  private _addWaitingQueue(init = false): void {
+    if (this._useGlobal) {
+      if (init) {
+        Animator.addWaitingAnimation(this);
+      }
+    } else {
+      this._frame = requestAnimationFrame(this._wait);
+    }
+  }
+
+  /**
+   * add instance to running queue
+   * @param init add to global animator when it's `true`
+   */
+  private _addRunningQueue(init = false): void {
+    if (this._useGlobal) {
+      if (init) {
+        Animator.addRunningAnimation(this);
       }
     } else {
       this._frame = requestAnimationFrame(this._draw);
@@ -198,8 +332,17 @@ export class Animator<T = number> {
    * cancel animation
    */
   cancel(): void {
-    cancelAnimationFrame(this._frame);
+    if (this._useGlobal) {
+      Animator.removeAnimator(this);
+    } else {
+      cancelAnimationFrame(this._frame);
+    }
   }
+}
+
+export interface AnimatorOptions {
+  // set `true` to use global frame
+  useGlobal?: boolean;
 }
 
 export interface AnimatorStartOptions<T> {
@@ -272,15 +415,15 @@ export type AnimatorTimingName =
  * easing formula comes from https://easings.net/
  */
 export class AnimatorTimingFunction {
-  static linear (x: number): number {
+  static linear(x: number): number {
     return x;
   }
 
-  static easeInSine (x: number): number {
+  static easeInSine(x: number): number {
     return 1 - Math.cos((x * Math.PI) / 2);
   }
 
-  static easeOutSine (x: number): number {
+  static easeOutSine(x: number): number {
     return Math.sin((x * Math.PI) / 2);
   }
 

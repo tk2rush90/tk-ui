@@ -1,0 +1,13 @@
+<!-- bar chart -->
+<app-bar-chart
+  [options]="barChartOptions"></app-bar-chart>
+
+<!-- options controller -->
+<app-options-controller
+  (confirmClick)="createChart()"
+  [controller]="optionController"></app-options-controller>
+
+<!-- code viewer -->
+<app-code-viewer>
+  {{barChartOptions | json}}
+</app-code-viewer>

@@ -1,0 +1,64 @@
+<!-- label -->
+<div class="label">
+  {{data.name}}
+</div>
+
+<!-- control -->
+<div class="control">
+  <!-- switch by type -->
+  <ng-container [ngSwitch]="data.type">
+    <ng-container *ngSwitchCase="'select'">
+      <!-- select -->
+      <app-select
+        [(ngModel)]="data.value"
+        [options]="data.options || []"></app-select>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'boolean'">
+      <!-- checkbox -->
+      <app-checkbox
+        [(ngModel)]="data.value"></app-checkbox>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'number'">
+      <!-- number input -->
+      <input
+        [(ngModel)]="data.value"
+        appInput
+        type="number"/>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'text'">
+      <!-- text input -->
+      <input
+        [(ngModel)]="data.value"
+        appInput
+        type="text"/>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'number[]'">
+      <!-- multi control -->
+      <div class="multi-control">
+        <!-- number input -->
+        <input
+          (ngModelChange)="onMultiValueChange(data.value, $event, index)"
+          *ngFor="let item of data.value; let index = index; trackBy: trackBy"
+          [ngModel]="item"
+          appInput
+          type="number"/>
+      </div>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'text[]'">
+      <!-- multi control -->
+      <div class="multi-control">
+        <!-- number input -->
+        <input
+          (ngModelChange)="onMultiValueChange(data.value, $event, index)"
+          *ngFor="let item of data.value; let index = index; trackBy: trackBy"
+          [ngModel]="item"
+          appInput/>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

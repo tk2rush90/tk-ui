@@ -1,0 +1,18 @@
+@import "mixins";
+@import "props";
+
+// container
+form {
+  @include flex(center, null, column);
+}
+
+// option space
+app-option-control-item + app-option-control-item {
+  margin-top: 5px;
+}
+
+// button
+button {
+  @include rect(160px, 40px);
+  margin-top: 10px;
+}

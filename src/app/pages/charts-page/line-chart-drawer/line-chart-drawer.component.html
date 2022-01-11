@@ -1,0 +1,13 @@
+<!-- line chart -->
+<app-line-chart
+  [options]="lineChartOptions"></app-line-chart>
+
+<!-- options controller -->
+<app-options-controller
+  (confirmClick)="createChart()"
+  [controller]="optionsController"></app-options-controller>
+
+<!-- code viewer -->
+<app-code-viewer>
+  {{lineChartOptions | json}}
+</app-code-viewer>

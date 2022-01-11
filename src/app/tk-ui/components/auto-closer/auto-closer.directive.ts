@@ -115,13 +115,15 @@ export class AutoCloserDirective implements AfterViewInit, OnDestroy {
     const target = event.target as HTMLElement;
 
     if (this.button) {
-      if (!this.button.contains(target)) {
+      if (this.button.contains(target)) {
+        event.stopPropagation();
         this._emitAutoClose();
+        return;
       }
-    } else {
-      if (!this._closerContainer.contains(target)) {
-        this._emitAutoClose();
-      }
+    }
+
+    if (!this._closerContainer.contains(target)) {
+      this._emitAutoClose();
     }
   }
 

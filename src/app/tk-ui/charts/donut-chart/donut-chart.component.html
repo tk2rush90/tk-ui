@@ -1,0 +1,27 @@
+<!-- svg -->
+<svg>
+  <!-- render paths -->
+  <path
+    (click)="onPathClick($event, item)"
+    (mouseleave)="onPathMouseLeave($event, item)"
+    (mouseenter)="onPathMouseEnter($event, item)"
+    *ngFor="let item of arcs"
+    [attr.transform]="transform"
+    [attr.d]="item.d"
+    [attr.fill]="item.data.color"/>
+
+  <!-- render label -->
+  <ng-container *ngIf="showLabel">
+    <!-- text -->
+    <text
+      *ngFor="let item of arcs"
+      [attr.fill]="labelColor"
+      [attr.font-size]="labelSize"
+      [attr.x]="item.center[0]"
+      [attr.y]="item.center[1]"
+      alignment-baseline="middle"
+      text-anchor="middle">
+      {{item.data.label}}
+    </text>
+  </ng-container>
+</svg>

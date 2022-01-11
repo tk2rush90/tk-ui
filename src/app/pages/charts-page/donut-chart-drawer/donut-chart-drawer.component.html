@@ -1,0 +1,13 @@
+<!-- donut chart -->
+<app-donut-chart
+  [options]="donutChartOptions"></app-donut-chart>
+
+<!-- options controller -->
+<app-options-controller
+  (confirmClick)="createChart()"
+  [controller]="optionsController"></app-options-controller>
+
+<!-- code viewer -->
+<app-code-viewer>
+  {{donutChartOptions | json}}
+</app-code-viewer>

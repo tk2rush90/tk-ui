@@ -1,0 +1,8 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  @include padding(0 80px 80px);
+  display: block;
+}

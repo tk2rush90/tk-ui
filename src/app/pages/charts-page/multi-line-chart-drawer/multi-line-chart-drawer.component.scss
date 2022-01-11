@@ -1,0 +1,19 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  @include flex(center, null, column);
+}
+
+// multi line chart
+app-multi-line-chart {
+  width: 100%;
+  max-width: 800px;
+  height: 400px;
+}
+
+// code viewer
+app-code-viewer {
+  margin-top: 30px;
+}

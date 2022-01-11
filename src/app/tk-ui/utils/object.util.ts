@@ -11,7 +11,11 @@ export class ObjectUtil {
 
     properties.forEach((p, i) => {
       if (i !== properties.length - 1) {
-        target = target[p] || {};
+        if (!target[p]) {
+          target[p] = {};
+        }
+
+        target = target[p];
       } else {
         target[p] = value;
       }

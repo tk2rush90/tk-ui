@@ -1,0 +1,55 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  @include flex(flex-start);
+}
+
+// host with multi value
+:host {
+  &.has-multi {
+    min-height: 40px;
+    height: auto;
+  }
+}
+
+// label
+.label {
+  @include flex(center);
+  @include padding(0 15px);
+  font-size: 14px;
+  height: 40px;
+  width: 200px;
+  color: #393939;
+}
+
+// control
+.control {
+  @include rect(200px, 100%);
+  @include flex(center);
+}
+
+// input
+input, app-select {
+  width: 100%;
+  height: 40px;
+}
+
+// multi control
+.multi-control {
+  @include flex(stretch, null, column);
+}
+
+.control {
+  .multi-control {
+    @include item-flex(1, 1, 0);
+  }
+}
+
+// input in multi control
+.multi-control {
+  input + input {
+    margin-top: 10px;
+  }
+}

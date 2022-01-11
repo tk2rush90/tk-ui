@@ -34,4 +34,15 @@ export class RandomUtil {
   static number(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min)) + min;
   }
+
+  /**
+   * create random color
+   */
+  static color(): string {
+    const r = Math.round(this.number(0, 255)).toString(16).padStart(2, '0');
+    const g = Math.round(this.number(0, 255)).toString(16).padStart(2, '0');
+    const b = Math.round(this.number(0, 255)).toString(16).padStart(2, '0');
+
+    return `#${r}${g}${b}`;
+  }
 }

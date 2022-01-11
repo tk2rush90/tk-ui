@@ -1,0 +1,18 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  @include flex(center, center);
+}
+
+// svg
+svg {
+  display: block;
+}
+
+// circle
+circle {
+  fill: none;
+  stroke-linecap: round;
+}

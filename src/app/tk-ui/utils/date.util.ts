@@ -94,7 +94,7 @@ export interface CalendarOptions {
   /**
    * set the month to get calendar dates
    * default value is current month
-   * month starts from `0`
+   * starts from `0`
    */
   month?: NumberLike;
 

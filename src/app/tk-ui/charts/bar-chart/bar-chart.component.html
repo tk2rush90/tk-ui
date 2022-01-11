@@ -1,0 +1,71 @@
+<!-- svg -->
+<svg>
+  <!-- x label group -->
+  <g *ngIf="canShowXLabels">
+    <!-- render label text -->
+    <text
+      *ngFor="let item of xLabels"
+      [attr.x]="item.x"
+      [attr.y]="item.y"
+      [attr.fill]="labelColor"
+      [attr.font-size]="labelSize"
+      text-anchor="middle"
+      alignment-baseline="hanging">
+      {{item.label}}
+    </text>
+  </g>
+
+  <!-- y label group -->
+  <g *ngIf="canShowYLabels">
+    <!-- render label text -->
+    <text
+      *ngFor="let item of yLabels"
+      [attr.x]="item.x"
+      [attr.y]="item.y"
+      [attr.fill]="labelColor"
+      [attr.font-size]="labelSize"
+      alignment-baseline="middle">
+      {{item.label}}
+    </text>
+  </g>
+
+  <!-- x grid group -->
+  <g *ngIf="canShowXGrids">
+    <!-- render grid lines -->
+    <line
+      *ngFor="let item of xGrids"
+      [attr.x1]="item.x1"
+      [attr.x2]="item.x2"
+      [attr.y1]="item.y1"
+      [attr.y2]="item.y2"
+      [attr.stroke]="gridColor"
+      [attr.stroke-width]="gridWidth"/>
+  </g>
+
+  <!-- y grid group -->
+  <g *ngIf="canShowYGrids">
+    <!-- render grid lines -->
+    <line
+      *ngFor="let item of yGrids"
+      [attr.x1]="item.x1"
+      [attr.x2]="item.x2"
+      [attr.y1]="item.y1"
+      [attr.y2]="item.y2"
+      [attr.stroke]="gridColor"
+      [attr.stroke-width]="gridWidth"/>
+  </g>
+
+  <!-- render bars -->
+  <g *ngFor="let item of bars">
+    <!-- render rect -->
+    <rect
+      (click)="onBarClick($event, item)"
+      (mouseleave)="onBarMouseLeave($event, item)"
+      (mouseenter)="onBarMouseEnter($event, item)"
+      [attr.x]="item.x"
+      [attr.y]="item.y"
+      [attr.width]="item.width"
+      [attr.height]="item.height"
+      [attr.fill]="item.data.color"/>
+  </g>
+</svg>

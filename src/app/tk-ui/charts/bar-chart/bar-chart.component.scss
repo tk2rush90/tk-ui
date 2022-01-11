@@ -1,0 +1,13 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  display: block;
+}
+
+// svg
+svg {
+  @include box(100%);
+  display: block;
+}

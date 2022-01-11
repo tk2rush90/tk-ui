@@ -57,7 +57,11 @@ export class InputDirective extends FormControlBaseDirective<string> {
     const el = this.elementRef?.nativeElement;
 
     if (el) {
-      el.value = value || '';
+      if (this.type === 'number') {
+        el.value = value || '0';
+      } else {
+        el.value = value || '';
+      }
     }
   }
 

@@ -130,7 +130,7 @@ export class SelectBaseComponent<T> extends FormControlBaseDirective<T> implemen
    */
   onOptionClicked(option: OptionItem<T>): void {
     this.setValue(option.value);
-    this.opened = false;
+    this.close();
   }
 
   /**

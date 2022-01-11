@@ -1,0 +1,13 @@
+<!-- multi line chart -->
+<app-multi-line-chart
+  [options]="multiLineChartOptions"></app-multi-line-chart>
+
+<!-- options controller -->
+<app-options-controller
+  (confirmClick)="createChart()"
+  [controller]="optionsController"></app-options-controller>
+
+<!-- code viewer -->
+<app-code-viewer>
+  {{multiLineChartOptions | json}}
+</app-code-viewer>

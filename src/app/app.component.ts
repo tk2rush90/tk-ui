@@ -1,85 +1,55 @@
-import {AfterViewInit, Component} from '@angular/core';
-import {Animator} from '@tk-ui/utils/animation.util';
+import {Component, OnInit} from '@angular/core';
+import {IndexedDbUtil} from '@tk-ui/utils/indexed-db.util';
+import {DbConfig} from './db/config';
+import {FirstDbService} from './services/first-db.service';
+import {FirstStoreService} from './services/first-store.service';
+import {RandomUtil} from '@tk-ui/utils/random.util';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements AfterViewInit {
+export class AppComponent implements OnInit {
   title = 'tk-ui';
 
-  get transform(): string {
-    return `translate(${this._x}px, ${this._y}px) rotate(${this._r}deg) scale(${this._s})`;
+  links = [
+    {
+      name: 'Components',
+      routerLink: ['/components'],
+    },
+    {
+      name: 'Charts',
+      routerLink: ['/charts'],
+    },
+  ];
+
+  ready = false;
+
+  constructor(
+    private firstDbService: FirstDbService,
+    private firstStoreService: FirstStoreService,
+  ) {
   }
 
-  get color(): string {
-    return '#' + Math.floor(this._color).toString(16);
+  ngOnInit(): void {
+    this._initDb()
+      .catch(e => console.error(e));
   }
 
-  private _x = 0;
-  private _y = 0;
-  private _r = 0;
-  private _s = 0;
-  private _color = 0x000000;
+  private async _initDb(): Promise<void> {
+    // Initialize db.
+    await IndexedDbUtil.initDb(DbConfig).toPromise();
 
-  ngAfterViewInit(): void {
-    const animator = new Animator<{
-      color: number,
-      x: number,
-      y: number,
-      s: number,
-    }>();
+    // Connect to db.
+    await this.firstDbService.connect().toPromise();
 
-    animator.animate({
-      start: {
-        color: 0x000000,
-        x: 0,
-        y: 0,
-        s: 1,
-      },
-      target: {
-        color: 0xffffff,
-        x: 300,
-        y: -100,
-        s: 2,
-      },
-      duration: 2000,
-      repeat: true,
-      alternate: true,
-      timing: 'easeInOutElastic',
-      calculator: (start, target, progress, passedTime) => {
-        if (passedTime >= animator.duration) {
-          return animator.target;
-        } else {
-          return {
-            color: Animator.calculateNumericProgress(start.color, target.color, progress),
-            x: Animator.calculateNumericProgress(start.x, target.x, progress),
-            y: Animator.calculateNumericProgress(start.y, target.y, progress),
-            s: Animator.calculateNumericProgress(start.s, target.s, progress),
-          };
-        }
-      },
-      onProgress: value => {
-        this._color = value.color;
-        this._x = value.x;
-        this._y = value.y;
-        this._s = value.s;
-      },
+    // Set ready state to `true`.
+    this.ready = true;
+
+    await this.firstStoreService.addData({
+      id: RandomUtil.key(),
+      name: 'holy-molly',
     });
-
-    this._rotate1();
-  }
-
-  private _rotate1(): void {
-    const animator = new Animator();
-
-    animator.animate({
-      start: 0,
-      target: 720,
-      duration: 1000,
-      repeat: true,
-      onProgress: value => this._r = value,
-    })
   }
 }
