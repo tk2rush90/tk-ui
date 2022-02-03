@@ -164,6 +164,10 @@ export class ModalRef<T> {
           useValue: this,
         },
       ],
+      // Add parent injector.
+      // From the Angular 13.2.0, when the parent injector is not specified,
+      // 'Cannot inject Renderer2 when the application uses Renderer3!' error is occurred.
+      parent: this._modalWrapperRef?.injector,
     });
   }
 
