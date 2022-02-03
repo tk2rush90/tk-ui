@@ -1,0 +1,40 @@
+@import "mixins";
+@import "props";
+
+// container
+:host {
+  position: relative;
+  display: block;
+  user-select: none;
+  cursor: pointer;
+}
+
+// slide track
+.tk-slide-track {
+  @include rect(100%, 4px);
+  position: relative;
+  top: 50%;
+  left: 0;
+  margin-top: -2px;
+  background-color: $white;
+  border-radius: 2px;
+}
+
+// slide thumb
+.tk-slide-thumb {
+  position: absolute;
+  height: 100%;
+  background-color: #6F86C5;
+  left: 0;
+  border-radius: 2px;
+}
+
+// slide button
+.tk-slide-button {
+  @include ball(20px);
+  position: absolute;
+  top: 50%;
+  margin-top: -10px;
+  margin-left: -10px;
+  background-color: #6F86C5;
+}

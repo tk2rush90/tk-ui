@@ -1,4 +1,4 @@
-import {ComponentFactoryResolver, ComponentRef, EventEmitter, Injector, Type, ViewContainerRef} from '@angular/core';
+import {ComponentRef, EventEmitter, Injector, Type, ViewContainerRef} from '@angular/core';
 import {ModalGroupComponent} from '@tk-ui/components/modal/components/modal-group/modal-group.component';
 import {ModalBackdropComponent} from '@tk-ui/components/modal/components/modal-backdrop/modal-backdrop.component';
 import {SubscriptionService} from '@tk-ui/services/common/subscription.service';
@@ -9,11 +9,6 @@ export class ModalRef<T> {
    * emit after the modal closed
    */
   closed: EventEmitter<void> = new EventEmitter<void>();
-
-  /**
-   * component factory resolver
-   */
-  private _resolver: ComponentFactoryResolver;
 
   /**
    * subscription service to manage observable events
@@ -52,7 +47,6 @@ export class ModalRef<T> {
 
   constructor(options: ModalRefOptions<T>) {
     this._component = options.component;
-    this._resolver = options.resolver;
     this._subscriptionService = options.subscriptionService;
     this._modalOptions = options.modalOptions;
   }
@@ -82,9 +76,7 @@ export class ModalRef<T> {
    * @param viewContainerRef viewContainerRef of `ModalGroup`
    */
   createModalGroupRef(viewContainerRef: ViewContainerRef): void {
-    const factory = this._resolver.resolveComponentFactory(ModalGroupComponent);
-
-    this._modalGroupRef = viewContainerRef.createComponent(factory);
+    this._modalGroupRef = viewContainerRef.createComponent(ModalGroupComponent);
     this._modalGroupRef.changeDetectorRef.detectChanges();
     this._createGroupChildren();
   }
@@ -106,9 +98,7 @@ export class ModalRef<T> {
    */
   private _createModalBackdrop(viewContainerRef: ViewContainerRef): void {
     if (this._modalGroupRef) {
-      const factory = this._resolver.resolveComponentFactory(ModalBackdropComponent);
-
-      this._modalBackdropRef = viewContainerRef.createComponent(factory);
+      this._modalBackdropRef = viewContainerRef.createComponent(ModalBackdropComponent);
       this._modalBackdropRef.changeDetectorRef.detectChanges();
       this._subscribeBackdropClick();
     }
@@ -134,9 +124,7 @@ export class ModalRef<T> {
    */
   private _createModalWrapper(viewContainerRef: ViewContainerRef): void {
     if (this._modalGroupRef) {
-      const factory = this._resolver.resolveComponentFactory(ModalWrapperComponent);
-
-      this._modalWrapperRef = viewContainerRef.createComponent(factory);
+      this._modalWrapperRef = viewContainerRef.createComponent(ModalWrapperComponent);
       this._modalWrapperRef.changeDetectorRef.detectChanges();
 
       if (this._modalWrapperRef.instance.viewContainerRef) {
@@ -151,10 +139,12 @@ export class ModalRef<T> {
    */
   private _createModalComponent(viewContainerRef: ViewContainerRef): void {
     if (this._modalGroupRef) {
-      const factory = this._resolver.resolveComponentFactory(this._component as unknown as Type<any>);
       const injector = this._createModalInjector();
 
-      this._modalComponentRef = viewContainerRef.createComponent(factory, undefined, injector);
+      this._modalComponentRef = viewContainerRef.createComponent(this._component as unknown as Type<T>, {
+        injector,
+      });
+
       this._modalComponentRef.changeDetectorRef.detectChanges();
     }
   }
@@ -239,11 +229,6 @@ export interface ModalRefOptions<T> {
    * modal component
    */
   component: T;
-
-  /**
-   * component factory resolver
-   */
-  resolver: ComponentFactoryResolver;
 
   /**
    * subscription service

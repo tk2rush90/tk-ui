@@ -6,9 +6,9 @@ export type SortOrder = 'asc' | 'desc';
 /**
  * sort column info
  */
-export interface SortColumn {
+export interface SortColumn<T> {
   // property name
-  property: string;
+  property: keyof T;
   // order
   order: SortOrder;
   // value type
@@ -46,12 +46,12 @@ export class SortUtil {
    * @param order sort order
    * @param type value type
    */
-  static sortMethodWithOrderByColumn<T>({property, order, type = 'string'}: SortColumn): any {
+  static sortMethodWithOrderByColumn<T>({property, order, type = 'string'}: SortColumn<T>): any {
     const sortMethod = this.sortMethodWithOrder(order);
 
     return (a: T, b: T) => {
-      let v1: any = ObjectUtil.getObjectValue<T>(a, property);
-      let v2: any = ObjectUtil.getObjectValue<T>(b, property);
+      let v1: any = ObjectUtil.getObjectValue<T>(a, property as any);
+      let v2: any = ObjectUtil.getObjectValue<T>(b, property as any);
 
       switch (type) {
         case 'string': {
@@ -87,7 +87,7 @@ export class SortUtil {
    * sort data with ordered multiple columns
    * @param sortedColumns sorted column list
    */
-  static sortMethodWithOrderMultiColumn<T>(sortedColumns: SortColumn[]): any {
+  static sortMethodWithOrderMultiColumn<T>(sortedColumns: SortColumn<T>[]): any {
     const sortMethodsForColumn = (sortedColumns || []).map((item) =>
       this.sortMethodWithOrderByColumn(item),
     );

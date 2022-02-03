@@ -1,0 +1,15 @@
+<!-- track -->
+<div
+  (mousedown)="onButtonMouseDown($event)"
+  (touchstart)="onButtonMouseDown($event)"
+  class="tk-slide-track">
+  <!-- thumb -->
+  <div
+    [style.width]="percent"
+    class="tk-slide-thumb"></div>
+
+  <!-- button -->
+  <div
+    [style.left]="percent"
+    class="tk-slide-button"></div>
+</div>

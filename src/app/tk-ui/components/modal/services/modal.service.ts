@@ -1,4 +1,4 @@
-import {ComponentFactoryResolver, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ModalOutletComponent} from '@tk-ui/components/modal/components/modal-outlet/modal-outlet.component';
 import {SubscriptionService} from '@tk-ui/services/common/subscription.service';
 import {ModalOptions, ModalRef} from '@tk-ui/components/modal/models/modal-ref';
@@ -26,7 +26,6 @@ export class ModalService {
 
   constructor(
     private subscriptionService: SubscriptionService,
-    private componentFactoryResolver: ComponentFactoryResolver,
   ) { }
 
   /**
@@ -45,11 +44,9 @@ export class ModalService {
   open<T>(component: T, options: ModalOptions = {}): void {
     const modalRef = new ModalRef({
       component,
-      resolver: this.componentFactoryResolver,
       subscriptionService: this.subscriptionService,
       modalOptions: options,
     });
-
 
     this._initializeModalRef(modalRef);
     this._subscribeModalClosed(modalRef);

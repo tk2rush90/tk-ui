@@ -1,4 +1,4 @@
-import {ComponentFactory, ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from '@angular/core';
+import {ComponentRef, Injectable, ViewContainerRef} from '@angular/core';
 import {ToastOutletComponent} from '@tk-ui/components/toast/components/toast-outlet/toast-outlet.component';
 import {ToastMessageComponent} from '@tk-ui/components/toast/components/toast-message/toast-message.component';
 import {SubscriptionService} from '@tk-ui/services/common/subscription.service';
@@ -20,7 +20,6 @@ export class ToastService {
 
   constructor(
     private subscriptionService: SubscriptionService,
-    private componentFactoryResolver: ComponentFactoryResolver,
   ) { }
 
   /**
@@ -37,10 +36,8 @@ export class ToastService {
    */
   open(options: ToastOptions): void {
     Object.keys(this._outlets).forEach(key => {
-      const factory = this.componentFactoryResolver.resolveComponentFactory(ToastMessageComponent);
-
       if (this._outlets[key].viewContainerRef) {
-        this._createToast(this._outlets[key].viewContainerRef as ViewContainerRef, factory, options);
+        this._createToast(this._outlets[key].viewContainerRef as ViewContainerRef, options);
       }
     });
   }
@@ -48,11 +45,10 @@ export class ToastService {
   /**
    * create toast for view container ref
    * @param viewContainerRef view container ref
-   * @param factory toast message factory
    * @param options toast options
    */
-  private _createToast(viewContainerRef: ViewContainerRef, factory: ComponentFactory<ToastMessageComponent>, options: ToastOptions): void {
-    const toast = viewContainerRef.createComponent(factory);
+  private _createToast(viewContainerRef: ViewContainerRef, options: ToastOptions): void {
+    const toast = viewContainerRef.createComponent(ToastMessageComponent);
 
     toast.instance.message = options.message;
     toast.instance.type = options.type || ToastType.default;

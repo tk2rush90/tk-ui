@@ -1,3 +1,10 @@
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export class MathUtil {
   /**
    * degree to radian
@@ -60,5 +67,22 @@ export class MathUtil {
    */
   static getArcLength(radius: number, start: number, end: number): number {
     return this.getCircleRoundLength(radius) * (Math.abs(end - start) / 360);
+  }
+
+  /**
+   * return `true` when `container` rect contains `rect` inside
+   * @param container container rect
+   * @param rect rect
+   */
+  static rectContainsRect(container: Rect, rect: Rect): boolean {
+    const containerX2 = container.x + container.width;
+    const containerY2 = container.y + container.height;
+    const rectX2 = rect.x + rect.width;
+    const rectY2 = rect.y + rect.height;
+
+    const xContained = (container.x <= rect.x && containerX2 >= rect.x) || (container.x <= rectX2 && containerX2 >= rectX2);
+    const yContained = (container.y <= rect.y && containerY2 >= rect.y) || (container.y <= rectY2 && containerY2 >= rectY2);
+
+    return xContained && yContained;
   }
 }

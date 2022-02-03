@@ -1,5 +1,4 @@
-import {Observable} from 'rxjs';
-import {fromPromise} from 'rxjs/internal-compatibility';
+import {Observable, from} from 'rxjs';
 
 export interface IndexedDbConfig {
   // Db name.
@@ -48,7 +47,7 @@ export class IndexedDbUtil {
       request.onerror = () => reject(request.error);
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -76,7 +75,7 @@ export class IndexedDbUtil {
       };
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -138,7 +137,7 @@ export class IndexedDbUtil {
       });
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -152,7 +151,7 @@ export class IndexedDbUtil {
       request.onerror = () => reject(request.error);
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -170,7 +169,7 @@ export class IndexedDbUtil {
       });
     });
 
-    return fromPromise(Promise.all(promises));
+    return from(Promise.all(promises));
   }
 
   /**
@@ -270,7 +269,7 @@ export class IndexedDbUtil {
       request.onerror = () => reject(request.error);
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -287,7 +286,7 @@ export class IndexedDbUtil {
       request.onerror = () => reject(request.error);
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -309,7 +308,7 @@ export class IndexedDbUtil {
       });
     });
 
-    return fromPromise(Promise.all(promises));
+    return from(Promise.all(promises));
   }
 
   /**
@@ -326,7 +325,7 @@ export class IndexedDbUtil {
       request.onerror = () => reject(request.error);
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**
@@ -344,7 +343,7 @@ export class IndexedDbUtil {
       request.onerror = () => reject(request.error);
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 
   /**

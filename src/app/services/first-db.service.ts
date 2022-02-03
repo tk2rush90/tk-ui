@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {IndexedDbUtil} from '@tk-ui/utils/indexed-db.util';
-import {fromPromise} from 'rxjs/internal-compatibility';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +36,6 @@ export class FirstDbService {
         });
     });
 
-    return fromPromise(promise);
+    return from(promise);
   }
 }

@@ -4,6 +4,7 @@ import {DbConfig} from './db/config';
 import {FirstDbService} from './services/first-db.service';
 import {FirstStoreService} from './services/first-store.service';
 import {RandomUtil} from '@tk-ui/utils/random.util';
+import {lastValueFrom} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -39,10 +40,10 @@ export class AppComponent implements OnInit {
 
   private async _initDb(): Promise<void> {
     // Initialize db.
-    await IndexedDbUtil.initDb(DbConfig).toPromise();
+    await lastValueFrom(IndexedDbUtil.initDb(DbConfig));
 
     // Connect to db.
-    await this.firstDbService.connect().toPromise();
+    await lastValueFrom(this.firstDbService.connect());
 
     // Set ready state to `true`.
     this.ready = true;

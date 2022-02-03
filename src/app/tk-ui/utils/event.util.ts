@@ -27,6 +27,73 @@ export class EventUtil {
   }
 
   /**
+   * return `true` when command key is pressed
+   * @param event keyboard event
+   * @param commandKeys command key array
+   * @param key other key
+   */
+  static isCommand(event: KeyboardEvent, commandKeys: CommandKey[], key: AvailableKey): boolean {
+    if (event) {
+      const isKey = this.isKey(event, key);
+      const isCommand = this._isOnlyCommand(event, commandKeys);
+
+      return isKey && isCommand;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Get xy position from mouse or touch event
+   * @param event event
+   */
+  static getMouseOrTouchXY(event?: MouseEvent | TouchEvent): { x: number, y: number } {
+    return {
+      x: (event as MouseEvent)?.x || (event as TouchEvent)?.touches[0]?.pageX || 0,
+      y: (event as MouseEvent)?.y || (event as TouchEvent)?.touches[0]?.pageY || 0,
+    };
+  }
+
+  /**
+   * return `true` when only the command key array are pushed
+   * @param event keyboard event
+   * @param commandKeys command key array
+   */
+  private static _isOnlyCommand(event: KeyboardEvent, commandKeys: CommandKey[]): boolean {
+    if (event) {
+      const toBePressed: CommandKeyMap = {
+        [CommandKey.ctrl]: false,
+        [CommandKey.alt]: false,
+        [CommandKey.shift]: false,
+        [CommandKey.meta]: false,
+      };
+
+      const isPressed: CommandKeyMap = {
+        [CommandKey.ctrl]: false,
+        [CommandKey.alt]: false,
+        [CommandKey.shift]: false,
+        [CommandKey.meta]: false,
+      };
+
+      // check to be pressed
+      commandKeys.forEach(key => {
+        toBePressed[key] = true;
+      });
+
+      isPressed[CommandKey.ctrl] = event.ctrlKey;
+      isPressed[CommandKey.shift] = event.shiftKey;
+      isPressed[CommandKey.alt] = event.altKey;
+      isPressed[CommandKey.meta] = event.metaKey;
+
+      return Object.keys(toBePressed).every(key => {
+        return toBePressed[key as CommandKey] === isPressed[key as CommandKey];
+      });
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * return the wheel direction with deltaY
    * @param deltaY deltaY value
    */
@@ -242,6 +309,20 @@ export const KEY_MAP = {
   KeyY: [89],
   KeyZ: [90],
 };
+
+export enum CommandKey {
+  ctrl = 'ctrl',
+  shift = 'shift',
+  alt = 'alt',
+  meta = 'meta',
+}
+
+interface CommandKeyMap {
+  [CommandKey.ctrl]: boolean;
+  [CommandKey.shift]: boolean;
+  [CommandKey.alt]: boolean;
+  [CommandKey.meta]: boolean;
+}
 
 /**
  * wheel direction enum
