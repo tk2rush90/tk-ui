@@ -1,11 +1,34 @@
 import {DatePipe} from '@angular/common';
 import {DateLike, NumberLike} from '@tk-ui/others/types';
-import {ValidationUtil} from '@tk-ui/utils/validation.util';
 import {CalendarDate} from '@tk-ui/models/calendar-date';
-
-const {isDefined} = ValidationUtil;
+import {ParsingUtil} from '@tk-ui/utils/parsing.util';
 
 export class DateUtil {
+  /**
+   * Parse the mm/dd/yy string date to milliseconds.
+   * @param date Date string formatted with mm/dd/yy.
+   */
+  static parse(date: string): Date | undefined {
+    // Remove all slashes.
+    date = date.replace(/\//g, '');
+
+    const reg = /^\d{6}$/;
+
+    if (reg.test(date)) {
+      let m: NumberLike = date.substring(0, 2);
+      let d: NumberLike = date.substring(2, 4);
+      let y: NumberLike = date.substring(4, 6);
+
+      m = ParsingUtil.toInteger(m);
+      d = ParsingUtil.toInteger(d);
+      y = ParsingUtil.toInteger(y);
+
+      return new Date(2000 + y, m - 1, d);
+    } else {
+      return;
+    }
+  }
+
   /**
    * return the formatted date by using Angular DatePipe
    * @param date date
@@ -23,61 +46,54 @@ export class DateUtil {
    * @param options option to create calendar
    */
   static calendar(options?: CalendarOptions): CalendarDate[] {
-    const {year, month} = this._getValuesFromCalendarOptions(options);
+    // Today's date to set initial `year`, `month` of calendar options.
+    const date = new Date();
+    const {year = date.getFullYear(), month = date.getMonth(), startingDayOfWeek = 0} = (options || {}) as CompletedCalendarOptions;
 
-    let calendarStartDate: number | undefined;
-    const start = 0;
+    let calendarStartDate: Date;
     const monthStartDate = new Date(year, month, 1);
     const monthStartDayOfWeek = monthStartDate.getDay();
 
     // calculate starting date of calendar
-    if (monthStartDayOfWeek > start) {
-      calendarStartDate = new Date(year, month, 1 - (monthStartDayOfWeek - start)).getDate();
-    } else if (monthStartDayOfWeek < start) {
-      calendarStartDate = new Date(year, month, 1 - (5 - start + monthStartDayOfWeek)).getDate();
+    if (monthStartDayOfWeek > startingDayOfWeek) {
+      calendarStartDate = new Date(year, month, 1 - (monthStartDayOfWeek - startingDayOfWeek));
+    } else if (monthStartDayOfWeek < startingDayOfWeek) {
+      // if `startingDayOfWeek` is `3` and `monthStartDayOfWeek` is `0`,
+      // Then, we can imagine following figure of calendar:
+      //
+      // Wed Thu Fri Sat Sun Mon Tue
+      // 27  28  29  30  1   2   3   : Dates
+      // 3   4   5   6   0   1   2   : Day of Weeks
+      //
+      // In this case, to calculate the start date of calendar,
+      //
+      // Wed Thu Fri Sat Sun Mon Tue
+      // 27  28  29  30  1   2   3   : Dates
+      // 3   4   5   6   0   1   2   : Day of Weeks
+      // └----------┘└┘
+      //       a        b
+      //
+      // reduce (a + b) from the `monthStartDayOfWeek`.
+      // So the formula is (6 - `startingDayOfWeek` + `monthStartDayOfWeek` + 1);
+      calendarStartDate = new Date(year, month, 1 - (6 - startingDayOfWeek + monthStartDayOfWeek + 1));
     } else {
-      calendarStartDate = monthStartDate.getDate();
+      calendarStartDate = monthStartDate;
     }
 
     // create calendar dates
     const dates: CalendarDate[] = [];
+    const calendarStartYear = calendarStartDate.getFullYear();
+    const calendarStartMonth = calendarStartDate.getMonth();
+    let calendarDate = calendarStartDate.getDate();
 
     // create 42 dates
     while (dates.length < 42) {
-      dates.push(new CalendarDate(new Date(year, month, calendarStartDate)));
+      dates.push(new CalendarDate(new Date(calendarStartYear, calendarStartMonth, calendarDate)));
 
-      calendarStartDate++;
+      calendarDate++;
     }
 
     return dates;
-  }
-
-  /**
-   * create completed calendar option
-   * @param options option to create calendar
-   */
-  private static _getValuesFromCalendarOptions(options?: CalendarOptions): CompletedCalendarOptions {
-    let {year, month} = options || {};
-    const yearEmpty = !isDefined(year);
-    const monthEmpty = !isDefined(month);
-
-    // fill empty year and month with current date
-    if (yearEmpty || monthEmpty) {
-      const date = new Date();
-
-      if (yearEmpty) {
-        year = date.getFullYear();
-      }
-
-      if (monthEmpty) {
-        month = date.getMonth();
-      }
-    }
-
-    return {
-      year: year as number,
-      month: month as number,
-    };
   }
 }
 
@@ -111,4 +127,5 @@ export interface CalendarOptions {
 export interface CompletedCalendarOptions {
   year: number;
   month: number;
+  startingDayOfWeek: number;
 }

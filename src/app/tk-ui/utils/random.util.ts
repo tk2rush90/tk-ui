@@ -27,7 +27,8 @@ export class RandomUtil {
   }
 
   /**
-   * pick random number between min and max
+   * pick random number between min and max.
+   * maximum number will not be chosen.
    * @param min min number
    * @param max max number
    */
